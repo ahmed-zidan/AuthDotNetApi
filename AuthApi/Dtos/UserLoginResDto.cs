@@ -11,5 +11,6 @@ namespace AuthApi.Dtos
         public string Name { get; set; }
         public DateTime Expired { get; set; }
         public string Token { get; set; }
+        public string RefreshToken { get; set; }
     }
 }

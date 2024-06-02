@@ -9,6 +9,7 @@ namespace AuthApi.Service
     public interface IUnitOfWork
     {
        ICustomerService _customer { get; }
+       IRefreshTokenService _refreshToken { get; }
        IUser _user { get; }
        Task<bool> saveChangesAsync();
        

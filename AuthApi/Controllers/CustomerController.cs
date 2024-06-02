@@ -3,6 +3,7 @@ using AuthApi.Helper;
 using AuthApi.Models;
 using AuthApi.Service;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace AuthApi.Controllers
 {
+    [Authorize]
     public class CustomerController : BaseController
     {
         private readonly IUnitOfWork _uof;

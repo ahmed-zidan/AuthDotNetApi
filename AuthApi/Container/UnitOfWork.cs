@@ -18,6 +18,8 @@ namespace AuthApi.Container
 
         public IUser _user => new UserService(_context);
 
+        public IRefreshTokenService _refreshToken => new RefreshService(_context);
+
         public async Task<bool> saveChangesAsync()
         {
             return await _context.SaveChangesAsync() > 0;

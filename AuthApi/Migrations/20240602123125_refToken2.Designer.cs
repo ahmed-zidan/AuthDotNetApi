@@ -3,14 +3,16 @@ using AuthApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AuthApi.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240602123125_refToken2")]
+    partial class refToken2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,7 +54,7 @@ namespace AuthApi.Migrations
 
             modelBuilder.Entity("AuthApi.Models.RefreshToken", b =>
                 {
-                    b.Property<int>("userId")
+                    b.Property<int>("Id")
                         .HasColumnType("int");
 
                     b.Property<string>("RefreshTokenId")
@@ -61,7 +63,7 @@ namespace AuthApi.Migrations
                     b.Property<string>("TokenId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("userId");
+                    b.HasKey("Id");
 
                     b.ToTable("RefreshTokens");
                 });

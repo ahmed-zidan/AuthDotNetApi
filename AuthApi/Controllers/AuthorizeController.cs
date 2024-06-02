@@ -49,16 +49,47 @@ namespace AuthApi.Controllers
             var token = _Jwt.generateToken(user);
             UserLoginResDto res = new UserLoginResDto()
             {
-               
                 Name = user.Name,
                 Expired = token.ValidTo,
-                Token = new JwtSecurityTokenHandler().WriteToken(token)
+                Token = new JwtSecurityTokenHandler().WriteToken(token),
+                RefreshToken = await _Jwt.generateRefreshTokenAsync(user.Id)
             };
             return Ok(res);
 
 
         }
 
-       
+        [HttpPost("RefreshToken")]
+        public async Task<IActionResult> RefreshToken(UserLoginResDto model)
+        {
+            ApiResponse api = new ApiResponse();
+            if (!ModelState.IsValid)
+            {
+                api.ResponseCode = 400;
+                api.ErrorMessage = "Please enter the password or name";
+                return BadRequest(api);
+            }
+
+            var tokenRef = await _uof._refreshToken.getToken(model.RefreshToken);
+            if (tokenRef == null)
+            {
+                api.ResponseCode = 401;
+                api.ErrorMessage = "You are not authorized";
+                return Unauthorized(api);
+            }
+            
+            var token = await _Jwt.generateNewTokenAsync(model);
+            if(token == null)
+            {
+                api.ResponseCode = 401;
+                api.ErrorMessage = "You are not authorized";
+                return Unauthorized(api);
+            }
+            
+            return Ok(model);
+
+        }
+
+
     }
 }
