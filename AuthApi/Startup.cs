@@ -40,6 +40,7 @@ namespace AuthApi
             services.AddControllers();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IJwtService, JwtService>();
+            services.AddTransient<IFileHandlerService, FileHandlerService>();
             services.AddDbContext<MyDbContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("AuthDb")));
             
             services.AddSwaggerGen(c =>
@@ -69,6 +70,8 @@ namespace AuthApi
                     };
                 });
 
+            
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -76,19 +79,20 @@ namespace AuthApi
         {
 
            
-            /*if (env.IsDevelopment())
+            if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+
+                //app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "AuthApi v1"));
-            }*/
-            
+            }
+            app.UseStaticFiles();
             app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseCors();
             
             app.UseHttpsRedirection();
-
+           
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
