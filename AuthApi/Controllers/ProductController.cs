@@ -1,5 +1,8 @@
-﻿using AuthApi.Helper;
+﻿using AuthApi.Dtos;
+using AuthApi.Helper;
+using AuthApi.Models;
 using AuthApi.Service;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -16,11 +19,13 @@ namespace AuthApi.Controllers
     {
         private readonly IUnitOfWork _uow;
         private readonly IFileHandlerService _fileHandler;
+        private readonly IMapper _mapper;
       
-        public ProductController(IUnitOfWork uow, IFileHandlerService fileHandler)
+        public ProductController(IUnitOfWork uow, IFileHandlerService fileHandler, IMapper mapper)
         {
             _uow = uow;
             _fileHandler = fileHandler;
+            _mapper = mapper;
         }
 
         [HttpPut("uploadImg/{productId}")]
@@ -257,6 +262,118 @@ namespace AuthApi.Controllers
             }
         }
 
+        [HttpPost("addProduct")]
+        public async Task<IActionResult> addProduct(ProductAddDto model)
+        {
+            ApiResponse api = new ApiResponse();
+            if (!ModelState.IsValid)
+            {
+                api.ResponseCode = 400;
+                api.ErrorMessage = "Data is not valid";
+                return BadRequest(api);
+            }
 
+            var product = _mapper.Map<Product>(model);
+            await _uow._prodcut.AddProduct(product);
+            await _uow.saveChangesAsync();
+            return StatusCode(201);
+        }
+
+        [HttpPut("uploadDbMultImg/{productId}")]
+        public async Task<IActionResult> uploadDbMultImg(IFormFileCollection form, int productId)
+        {
+            ApiResponse api = new ApiResponse();
+            if (!ModelState.IsValid)
+            {
+                api.ResponseCode = 400;
+                api.ErrorMessage = "Data is not valid";
+                return BadRequest(api);
+            }
+
+          
+            int passCnt = 0, errCnt = 0;
+            var product = await _uow._prodcut.GetProduct(productId);
+            if(product == null)
+            {
+                api.ResponseCode = 404;
+                api.ErrorMessage = "Not found";
+                return NotFound(api);
+            }
+            var imgs = product.productImgs;
+            for (int i = 0; i < form.Count; i++)
+            {
+                try
+                {
+                    using(MemoryStream stream = new MemoryStream())
+                    {
+                        await form[i].CopyToAsync(stream);
+                            imgs.Add(new Models.ProductImg()
+                            {
+                                image = stream.ToArray(),
+                                ProductId = product.Id
+                            });
+                    }
+                   
+                    passCnt++;
+                }
+                catch
+                {
+                    errCnt++;
+                }
+            }
+
+            await _uow.saveChangesAsync();
+
+            api.ResponseCode = 201;
+            api.Result = passCnt + " Passed, " + errCnt + " Failed";
+            return Ok(api);
+
+        }
+
+        [HttpGet("getDbImages")]
+        public async Task<IActionResult> getDbImages(int productId)
+        {
+            ApiResponse api = new ApiResponse();
+            var product = await _uow._prodcut.GetProduct(productId);
+            if(product == null)
+            {
+                api.ResponseCode = 404;
+                api.ErrorMessage = "Not found";
+                return NotFound(api);
+            }
+            var imgs = new List<string>();
+            foreach(var im in product.productImgs)
+            {
+                imgs.Add(Convert.ToBase64String(im.image));
+            }
+
+            return Ok(imgs);
+
+        }
+
+        [HttpGet("dbDownload/{productId}")]
+        public async Task<IActionResult> dbDownload(int productId)
+        {
+            ApiResponse api = new ApiResponse();
+            if (!ModelState.IsValid)
+            {
+                api.ResponseCode = 400;
+                api.ErrorMessage = "Data is not valid";
+                return BadRequest(api);
+            }
+
+            var prod = await _uow._prodcut.GetProduct(productId);
+            if (prod != null && prod.productImgs.Count > 0)
+            {
+                var prodImgs = prod.productImgs.FirstOrDefault();
+                return File(prodImgs.image, "image/png", productId + ".png");
+            }
+            else
+            {
+                api.ResponseCode = 404;
+                api.ErrorMessage = "Not Found";
+                return NotFound(api);
+            }
+        }
     }
 }

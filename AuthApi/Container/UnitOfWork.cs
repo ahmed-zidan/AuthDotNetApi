@@ -20,6 +20,8 @@ namespace AuthApi.Container
 
         public IRefreshTokenService _refreshToken => new RefreshService(_context);
 
+        public IProduct _prodcut => new Product(_context);
+
         public async Task<bool> saveChangesAsync()
         {
             return await _context.SaveChangesAsync() > 0;

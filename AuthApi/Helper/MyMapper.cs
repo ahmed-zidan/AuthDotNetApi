@@ -15,6 +15,7 @@ namespace AuthApi.Helper
             CreateMap<Customer, CustomerListDto>();
             CreateMap<CustomerAddDto, Customer>();
             CreateMap<UserLoginDto, User>();
+            CreateMap<ProductAddDto, Product>();
         }
     }
 }
