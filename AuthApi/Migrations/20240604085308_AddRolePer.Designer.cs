@@ -4,14 +4,16 @@ using AuthApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AuthApi.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240604085308_AddRolePer")]
+    partial class AddRolePer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,24 +51,6 @@ namespace AuthApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Customers");
-                });
-
-            modelBuilder.Entity("AuthApi.Models.Menu", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Menus");
                 });
 
             modelBuilder.Entity("AuthApi.Models.OtpManager", b =>
@@ -172,15 +156,13 @@ namespace AuthApi.Migrations
                     b.Property<bool>("HaveView")
                         .HasColumnType("bit");
 
-                    b.Property<int>("MenuCode")
-                        .HasColumnType("int");
+                    b.Property<string>("MenuCode")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserRole")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("MenuCode");
 
                     b.ToTable("RolePermissions");
                 });
@@ -235,22 +217,6 @@ namespace AuthApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("AuthApi.Models.RolePermission", b =>
-                {
-                    b.HasOne("AuthApi.Models.Menu", "Menu")
-                        .WithMany("RolePermissions")
-                        .HasForeignKey("MenuCode")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Menu");
-                });
-
-            modelBuilder.Entity("AuthApi.Models.Menu", b =>
-                {
-                    b.Navigation("RolePermissions");
                 });
 
             modelBuilder.Entity("AuthApi.Models.Product", b =>

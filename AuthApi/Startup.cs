@@ -41,6 +41,8 @@ namespace AuthApi
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IJwtService, JwtService>();
             services.AddTransient<IFileHandlerService, FileHandlerService>();
+            services.AddTransient<IOtpService, OtpService>();
+            services.AddTransient<IEmailSender, EmailSender>();
             services.AddDbContext<MyDbContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("AuthDb")));
             
             services.AddSwaggerGen(c =>

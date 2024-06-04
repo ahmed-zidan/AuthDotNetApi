@@ -16,11 +16,15 @@ namespace AuthApi.Container
         }
         public ICustomerService _customer => new CustomerService(_context);
 
-        public IUser _user => new UserService(_context);
+        public IUser _user => new UserService(_context,new OtpService(),new EmailSender());
 
         public IRefreshTokenService _refreshToken => new RefreshService(_context);
 
         public IProduct _prodcut => new Product(_context);
+
+        public IRolePermissionService _rolePermission => new RolePermisionService(_context);
+
+        public MenuService _menueService => new MenuService(_context);
 
         public async Task<bool> saveChangesAsync()
         {

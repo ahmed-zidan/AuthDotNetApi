@@ -18,5 +18,7 @@ namespace AuthApi.Data
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductImg> ProductImgs { get; set; }
+        public DbSet<RolePermission> RolePermissions { get; set; }
+        public DbSet<Menu> Menus { get; set; }
     }
 }
