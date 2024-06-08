@@ -47,12 +47,39 @@ namespace AuthApi.Controllers
             }
         }
         
-        [HttpGet("getroles")]
+        [HttpGet("getroles/{role}")]
         public async Task<IActionResult> getRoles(string role)
         {
             var roles = await _uow._rolePermission.allRoles(role);
-            return Ok(roles);
+            var rolesDto = _mapper.Map<List<RoleMenuDto>>(roles);
+            return Ok(rolesDto);
         }
+        [HttpPost("getMenuRole")]
+        public async Task<IActionResult> getMenuRole(RoleMenuPermessionDto role)
+        {
+            var roleRes = await _uow._rolePermission.getMenuByRole(role.Role , role.Menu);
+            if (roleRes == null)
+            {
+                return NotFound();
+            }
+            var res = _mapper.Map<RoleMenuPermessionResDto>(roleRes);
+            return Ok(res);
+        }
+        
+        [HttpGet("getAllRoles")]
+        public async Task<IActionResult> getAllRoles()
+        {
+            var roleRes = await _uow._rolePermission.getAlRoles();
+            if (roleRes == null)
+            {
+                return NotFound();
+            }
+            //var res = _mapper.Map<RoleMenuPermessionResDto>(roleRes);
+            return Ok(roleRes);
+        }
+
+
+
 
     }
 }

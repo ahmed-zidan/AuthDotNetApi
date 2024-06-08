@@ -10,5 +10,8 @@ namespace AuthApi.Service
     {
         Task addMenu(Menu menu);
         Task<IEnumerable<Menu>> allMenus();
+        Task<IEnumerable<Menu>> allMenusByRole(string role);
+       
+
     }
 }

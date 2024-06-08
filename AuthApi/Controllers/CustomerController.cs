@@ -65,16 +65,10 @@ namespace AuthApi.Controllers
             return StatusCode(201);
         }
 
-        [HttpPost("Update/{id}")]
+        [HttpPut("Update/{id}")]
         public async Task<IActionResult> Update(CustomerUpdateDto model , int id)
         {
             ApiResponse api = new ApiResponse();
-            if (!ModelState.IsValid)
-            {
-                api.ResponseCode = 400;
-                api.ErrorMessage = "Model is not Valid";
-                return BadRequest(api);
-            }
             if(model.Id != id)
             {
                 api.ResponseCode = 400;
@@ -92,6 +86,7 @@ namespace AuthApi.Controllers
             cust.Name = model.Name;
             cust.Phone = model.Phone;
             cust.Email = model.Email;
+            cust.IsActive = model.IsActive;
             
              _uof._customer.Update(cust);
             await _uof.saveChangesAsync();
@@ -99,7 +94,7 @@ namespace AuthApi.Controllers
             return Ok();
         }
 
-        [HttpPost("Remove/{id}")]
+        [HttpDelete("Remove/{id}")]
         public async Task<IActionResult> Remove(int id)
         {
             ApiResponse api = new ApiResponse();

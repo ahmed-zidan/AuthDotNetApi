@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace AuthApi.Dtos
 {
-    public class CustomerAddDto
+    public class UserListDto
     {
-        [StringLength(50)]
+        public int Id { get; set; }
         public string Name { get; set; }
-        [StringLength(50)]
         public string Email { get; set; }
-        [Required]
         public string Phone { get; set; }
-        public string CreditLimit { get; set; }
+        public string Role { get; set; }
         public bool IsActive { get; set; }
     }
 }

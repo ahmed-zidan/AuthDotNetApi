@@ -75,10 +75,10 @@ namespace AuthApi.Container
 
         }
 
-        public async Task<ApiResponse> forgetPassword(int userId)
+        public async Task<ApiResponse> forgetPassword(string email)
         {
             ApiResponse api = new ApiResponse();
-            var user = await _context.Users.Include(x=>x.OtpManager).Where(x => x.Id == userId && x.IsActive == true).FirstOrDefaultAsync();
+            var user = await _context.Users.Include(x=>x.OtpManager).Where(x => x.Email == email && x.IsActive == true).FirstOrDefaultAsync();
             if(user != null)
             {
                 string otp = _otpService.generateOtp();
@@ -88,7 +88,7 @@ namespace AuthApi.Container
                 user.OtpManager.CreateDate = DateTime.Now;
                 _emailSender.sendEmail(user.Name, otp);
                 await _context.SaveChangesAsync();
-                api.Result = "Passed";
+                api.Result = user.Id.ToString();
                 api.ResponseCode = 200;
             }
             else
@@ -113,7 +113,7 @@ namespace AuthApi.Container
             }
             else
             {
-                api.Result = "Not Found";
+                api.ErrorMessage = "Not Found";
                 api.ResponseCode = 404;
             }
             return api;
@@ -123,7 +123,7 @@ namespace AuthApi.Container
         {
             return await _context.Users.FirstOrDefaultAsync(x => x.Name == name && x.Password == password);
         }
-
+      
         public async Task<ApiResponse> updatePassword(int userId, string password, string oldPassword)
         {
             ApiResponse api = new ApiResponse();
@@ -173,6 +173,33 @@ namespace AuthApi.Container
             api.ResponseCode = 200;
             api.Result = "passed";
             return api;
+        }
+
+        public async Task<IEnumerable<User>> getUsers()
+        {
+            return await _context.Users.ToListAsync();
+        }
+        public async Task<ApiResponse> deleteUser(int id)
+        {
+            ApiResponse api = new ApiResponse();
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            if(user == null)
+            {
+                api.ResponseCode = 404;
+                api.ErrorMessage = "not found";
+                api.Result = "Fail";
+                return api;
+            }
+
+            _context.Users.Remove(user);
+            api.ResponseCode = 200;
+            api.Result = "Passed";
+            return api;
+        }
+
+        public async Task<User> GetUser(int id)
+        {
+            return await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
         }
     }
 }

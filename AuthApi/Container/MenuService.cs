@@ -25,5 +25,12 @@ namespace AuthApi.Container
         {
            return await _contex.Menus.ToListAsync();
         }
+        public async Task<IEnumerable<Menu>> allMenusByRole(string role)
+        {
+            return await _contex.RolePermissions.Include(x => x.Menu).Where(x => x.UserRole == role &&x.HaveView == true)
+                .Select(x => new Menu { Id = x.MenuCode, Name = x.Menu.Name, Status = x.Menu.Status }).ToListAsync();
+        }
+
+       
     }
 }

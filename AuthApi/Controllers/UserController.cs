@@ -3,6 +3,7 @@ using AuthApi.Helper;
 using AuthApi.Models;
 using AuthApi.Service;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -26,13 +27,7 @@ namespace AuthApi.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> register(UserRegisterDto model)
         {
-            ApiResponse api = new ApiResponse();
-            if (!ModelState.IsValid)
-            {
-                api.ResponseCode = 400;
-                api.ErrorMessage = "model is not valid";
-                return BadRequest(api);
-            }
+            
             var user = _mapper.Map<User>(model);
             await _uow._user.addUserAsync(user);
             await _uow.saveChangesAsync();
@@ -55,25 +50,70 @@ namespace AuthApi.Controllers
         }
         
         [HttpPost("updatePwd")]
+        [Authorize]
         public async Task<IActionResult> updatePwd(UpdatePasswordDto model)
         {
             var res = await _uow._user.updatePassword(model.Id , model.Password , model.OldPassword);
+            if(res.ResponseCode == 404)
+            {
+                return NotFound(res);
+            }
             return Ok(res);
         }
 
-        [HttpGet("forgetPassword/{userId}")]
-        public async Task<IActionResult> forgetPassword(int userId)
+        [HttpGet("forgetPassword/{email}")]
+        public async Task<IActionResult> forgetPassword(string email)
         {
-            var res = await _uow._user.forgetPassword(userId);
-            return Ok(res);
+            var res = await _uow._user.forgetPassword(email);
+            if(res.ResponseCode == 200)
+            {
+                return Ok(res);
+            }
+            return BadRequest(res);
+            
         }
 
         [HttpPost("addNewPass")]
         public async Task<IActionResult> addNewPass(UserAddNewPassDto model)
         {
             var res = await _uow._user.addNewPassword(model.Id,model.Password,model.Otp);
+            if(res.ResponseCode == 404)
+            {
+                return NotFound(res);
+            }
             return Ok(res);
         }
+        [HttpDelete("deleteUser/{id}")]
+        public async Task<IActionResult> deleteUser(int id)
+        {
+            var res = await _uow._user.deleteUser(id);
+            if (res.ResponseCode == 404)
+            {
+                return NotFound(res);
+            }
+            else
+            {
+                await _uow.saveChangesAsync();
+                return Ok(res);
+            }
+            
+        }
+        [HttpGet("getUsers")]
+        public async Task<IActionResult> getUsers()
+        {
+            var res = await _uow._user.getUsers();
+            var users = _mapper.Map<List<UserListDto>>(res);
+            return Ok(users);
+        }
+
+        [HttpGet("getUser/{id}")]
+        public async Task<IActionResult> getUser(int id)
+        {
+            var res = await _uow._user.GetUser(id);
+            var user = _mapper.Map<UserListDto>(res);
+            return Ok(user);
+        }
+
         [HttpPost("updateStatus")]
         public async Task<IActionResult> updateStatus(UserUpdateStutus model)
         {

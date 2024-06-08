@@ -17,9 +17,18 @@ namespace AuthApi.Helper
             CreateMap<UserLoginDto, User>();
             CreateMap<ProductAddDto, Product>();
             CreateMap<UserRegisterDto, User>();
-            CreateMap<RolePermissionAdd, RolePermission>();
+            CreateMap<RolePermissionAdd, RolePermission>()
+                .ForMember(x=>x.MenuCode , y=>y.MapFrom(src=>src.menuId));
             CreateMap<MenuAddDto, Menu>();
             CreateMap<Menu, MenuListDto>();
+            CreateMap<RolePermission, RoleMenuPermessionResDto>();
+            CreateMap<User, UserListDto>();
+            CreateMap<RolePermission, RoleMenuDto>()
+                .ForMember(x=>x.MenuName , y=>y.MapFrom(src=>src.Menu.Name))
+                .ForMember(x=>x.menuId , y=>y.MapFrom(src=>src.Menu.Id));
+
+           
+
         }
     }
 }

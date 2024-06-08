@@ -10,6 +10,6 @@ namespace AuthApi.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public bool Status { get; set; }
-        public ICollection<RolePermission> RolePermissions { get; set; }
+        //public ICollection<RolePermission> RolePermissions { get; set; }
     }
 }

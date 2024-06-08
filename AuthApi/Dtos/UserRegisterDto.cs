@@ -10,9 +10,7 @@ namespace AuthApi.Dtos
     {
         [Required]
         public string Name { get; set; }
-        [EmailAddress]
         public string Email { get; set; }
-        [Phone]
         public string Phone { get; set; }
         [Required]
         public string Password { get; set; }

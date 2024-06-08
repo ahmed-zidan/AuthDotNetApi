@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AuthApi.Models
+namespace AuthApi.Dtos
 {
-    public class RolePermission
+    public class RoleMenuDto
     {
-        public int Id { get; set; }
         public string UserRole { get; set; }
-        [ForeignKey("Menu")]
-        public int MenuCode { get; set; }
-        public Menu Menu { get; set; }
+        public int menuId { get; set; }
+        public string MenuName { get; set; }
         public bool HaveView { get; set; }
         public bool HaveAdd { get; set; }
         public bool HaveEdit { get; set; }

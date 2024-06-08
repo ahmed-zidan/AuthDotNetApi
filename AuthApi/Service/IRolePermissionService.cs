@@ -11,5 +11,8 @@ namespace AuthApi.Service
     {
         Task<ApiResponse> assignRoles(List<RolePermission> permissions);
         Task<IEnumerable<RolePermission>> allRoles(string role);
+        Task<RolePermission> getMenuByRole(string role, string menuName);
+        Task<IEnumerable<string>> getAlRoles();
+
     }
 }

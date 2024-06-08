@@ -31,18 +31,19 @@ namespace AuthApi.Controllers
         public async Task<IActionResult> Login(UserLoginDto model)
         {
             ApiResponse api = new ApiResponse();
-            if (!ModelState.IsValid)
-            {
-                api.ResponseCode = 400;
-                api.ErrorMessage = "Please enter the password or name";
-                return BadRequest(api);
-            }
 
             var user = await _uof._user.GetUser(model.Name, model.Password);
             if(user == null)
             {
                 api.ResponseCode = 401;
                 api.ErrorMessage = "the password or name is not correct";
+                return Unauthorized(api);
+            }
+            if(user.IsActive == false)
+            {
+                api.ResponseCode = 402;
+                api.ErrorMessage = "Not Activated";
+                api.Result = user.Id.ToString();
                 return Unauthorized(api);
             }
 
@@ -52,11 +53,11 @@ namespace AuthApi.Controllers
                 Name = user.Name,
                 Expired = token.ValidTo,
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
-                RefreshToken = await _Jwt.generateRefreshTokenAsync(user.Id)
+                RefreshToken = await _Jwt.generateRefreshTokenAsync(user.Id),
+                UserRole = user.Role,
+                Id = user.Id
             };
             return Ok(res);
-
-
         }
 
         [HttpPost("RefreshToken")]

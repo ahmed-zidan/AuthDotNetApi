@@ -38,5 +38,12 @@ namespace AuthApi.Controllers
             return Ok(menusDto);
         }
 
+        [HttpGet("getmenusByRole/{role}")]
+        public async Task<IActionResult> getMenus(string role)
+        {
+            var menus = await _uow._menueService.allMenusByRole(role);
+            var menusDto = _mapper.Map<List<MenuListDto>>(menus);
+            return Ok(menusDto);
+        }
     }
 }
