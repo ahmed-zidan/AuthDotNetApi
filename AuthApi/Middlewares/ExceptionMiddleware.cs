@@ -32,6 +32,7 @@ namespace AuthApi.Middlewares
             try
             {
                 await next(context);
+                
             }
             catch (Exception ex)
             {

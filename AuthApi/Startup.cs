@@ -36,7 +36,7 @@ namespace AuthApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            
             services.AddControllers();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IJwtService, JwtService>();
@@ -90,7 +90,7 @@ namespace AuthApi
             }
             app.UseStaticFiles();
             app.UseMiddleware<ExceptionMiddleware>();
-
+            
             app.UseCors();
             
             app.UseHttpsRedirection();

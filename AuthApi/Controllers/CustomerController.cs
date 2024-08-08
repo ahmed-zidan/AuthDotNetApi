@@ -1,4 +1,5 @@
 ﻿using AuthApi.Dtos;
+using AuthApi.Filters;
 using AuthApi.Helper;
 using AuthApi.Models;
 using AuthApi.Service;
@@ -13,7 +14,8 @@ using System.Threading.Tasks;
 
 namespace AuthApi.Controllers
 {
-    [Authorize]
+    //[Authorize]
+    [LoggerAttribute]
     public class CustomerController : BaseController
     {
         private readonly IUnitOfWork _uof;
@@ -25,6 +27,7 @@ namespace AuthApi.Controllers
         }
 
         [HttpGet("GetAll")]
+        [LoggerAttribute]
         public async Task<IActionResult> GetAll()
         {
             var custs = await _uof._customer.getAll();
